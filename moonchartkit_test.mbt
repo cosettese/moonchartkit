@@ -27,3 +27,23 @@ test "midnight theme uses dark background" {
   assert_eq(theme.background, "#111827")
   assert_eq(theme.foreground, "#f9fafb")
 }
+
+///|
+test "plot area respects chart padding" {
+  let area = @moonchartkit.ChartSize::new(400, 240, 24).plot_area()
+  assert_eq(area.x, 24)
+  assert_eq(area.y, 24)
+  assert_eq(area.width, 352)
+  assert_eq(area.height, 192)
+}
+
+///|
+test "dataset helpers compute max and total" {
+  let points = [
+    @moonchartkit.DataPoint::new("A", 10),
+    @moonchartkit.DataPoint::new("B", 30),
+    @moonchartkit.DataPoint::new("C", 20),
+  ]
+  assert_eq(@moonchartkit.max_value(points), 30)
+  assert_eq(@moonchartkit.total_value(points), 60)
+}

@@ -23,6 +23,14 @@ pub(all) struct ChartTheme {
 } derive(Eq, Debug)
 
 ///|
+pub(all) struct PlotArea {
+  x : Int
+  y : Int
+  width : Int
+  height : Int
+} derive(Eq, Debug)
+
+///|
 pub fn ChartSize::new(width : Int, height : Int, padding : Int) -> ChartSize {
   {
     width: normalize_positive(width, 640),
@@ -59,6 +67,48 @@ pub fn ChartTheme::midnight() -> ChartTheme {
     grid: "#374151",
     font_family: "Inter, Segoe UI, sans-serif",
     radius: 6,
+  }
+}
+
+///|
+pub fn ChartSize::plot_area(self : ChartSize) -> PlotArea {
+  {
+    x: self.padding,
+    y: self.padding,
+    width: self.width - self.padding * 2,
+    height: self.height - self.padding * 2,
+  }
+}
+
+///|
+pub fn max_value(points : Array[DataPoint]) -> Int {
+  if points.length() == 0 {
+    return 0
+  }
+  let mut best = points[0].value
+  for i = 1; i < points.length(); i = i + 1 {
+    if points[i].value > best {
+      best = points[i].value
+    }
+  }
+  best
+}
+
+///|
+pub fn total_value(points : Array[DataPoint]) -> Int {
+  let mut total = 0
+  for i = 0; i < points.length(); i = i + 1 {
+    total = total + points[i].value
+  }
+  total
+}
+
+///|
+fn scale_value(value : Int, max : Int, height : Int) -> Int {
+  if max <= 0 || value <= 0 {
+    0
+  } else {
+    value * height / max
   }
 }
 
