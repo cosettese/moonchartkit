@@ -164,6 +164,51 @@ pub fn render_bar_chart(
 }
 
 ///|
+pub fn render_line_chart(
+  points : Array[DataPoint],
+  title? : String = "",
+  size? : ChartSize = ChartSize::new(640, 360, 44),
+  theme? : ChartTheme = ChartTheme::atelier(),
+) -> String {
+  let area = size.plot_area()
+  let max = normalize_positive(max_value(points), 1)
+  let buf = StringBuilder()
+  buf.write_string(svg_header(size, theme))
+  buf.write_string(svg_background(size, theme))
+  buf.write_string(svg_title(title, size, theme))
+  buf.write_string(
+    "<line x1=\"\{area.x}\" y1=\"\{area.y + area.height}\" x2=\"\{area.x + area.width}\" y2=\"\{area.y + area.height}\" stroke=\"\{theme.grid}\"/>",
+  )
+  if points.length() > 0 {
+    let step = if points.length() == 1 {
+      0
+    } else {
+      area.width / (points.length() - 1)
+    }
+    let path = StringBuilder()
+    for i = 0; i < points.length(); i = i + 1 {
+      let x = area.x + i * step
+      let y = area.y +
+        area.height -
+        scale_value(points[i].value, max, area.height)
+      if i == 0 {
+        path.write_string("M \{x} \{y}")
+      } else {
+        path.write_string(" L \{x} \{y}")
+      }
+      buf.write_string(
+        "<circle cx=\"\{x}\" cy=\"\{y}\" r=\"4\" fill=\"\{theme.accent_alt}\"/>",
+      )
+    }
+    buf.write_string(
+      "<path d=\"\{path.to_string()}\" fill=\"none\" stroke=\"\{theme.accent}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>",
+    )
+  }
+  buf.write_string("</svg>")
+  buf.to_string()
+}
+
+///|
 fn svg_header(size : ChartSize, theme : ChartTheme) -> String {
   "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"\{size.width}\" height=\"\{size.height}\" viewBox=\"0 0 \{size.width} \{size.height}\" role=\"img\" style=\"font-family:\{escape_xml(theme.font_family)}\">"
 }

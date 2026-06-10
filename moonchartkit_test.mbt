@@ -72,3 +72,16 @@ test "bar chart escapes labels" {
   let svg = @moonchartkit.render_bar_chart(points)
   assert_true(svg.contains("A&amp;B"))
 }
+
+///|
+test "line chart renders path and point markers" {
+  let points = [
+    @moonchartkit.DataPoint::new("Jan", 10),
+    @moonchartkit.DataPoint::new("Feb", 30),
+    @moonchartkit.DataPoint::new("Mar", 20),
+  ]
+  let svg = @moonchartkit.render_line_chart(points, title="Trend")
+  assert_true(svg.contains("<path"))
+  assert_true(svg.contains("<circle"))
+  assert_true(svg.contains("Trend"))
+}
