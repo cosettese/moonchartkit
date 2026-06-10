@@ -248,6 +248,35 @@ pub fn render_sparkline(
 }
 
 ///|
+pub fn render_metric_card(
+  title : String,
+  value : String,
+  caption? : String = "",
+  size? : ChartSize = ChartSize::new(360, 180, 28),
+  theme? : ChartTheme = ChartTheme::atelier(),
+) -> String {
+  let buf = StringBuilder()
+  buf.write_string(svg_header(size, theme))
+  buf.write_string(svg_background(size, theme))
+  buf.write_string(
+    "<circle cx=\"\{size.width - 40}\" cy=\"40\" r=\"18\" fill=\"\{theme.accent}\" opacity=\"0.18\"/>",
+  )
+  buf.write_string(
+    "<text x=\"\{size.padding}\" y=\"48\" font-size=\"13\" font-weight=\"700\" fill=\"\{theme.foreground}\" opacity=\"0.78\">\{escape_xml(title)}</text>",
+  )
+  buf.write_string(
+    "<text x=\"\{size.padding}\" y=\"104\" font-size=\"40\" font-weight=\"800\" fill=\"\{theme.foreground}\">\{escape_xml(value)}</text>",
+  )
+  if caption != "" {
+    buf.write_string(
+      "<text x=\"\{size.padding}\" y=\"140\" font-size=\"12\" fill=\"\{theme.foreground}\" opacity=\"0.68\">\{escape_xml(caption)}</text>",
+    )
+  }
+  buf.write_string("</svg>")
+  buf.to_string()
+}
+
+///|
 fn svg_header(size : ChartSize, theme : ChartTheme) -> String {
   "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"\{size.width}\" height=\"\{size.height}\" viewBox=\"0 0 \{size.width} \{size.height}\" role=\"img\" style=\"font-family:\{escape_xml(theme.font_family)}\">"
 }

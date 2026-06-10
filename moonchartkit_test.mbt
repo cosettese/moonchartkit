@@ -93,3 +93,15 @@ test "sparkline renders compact svg path" {
   assert_true(svg.contains("<path"))
   assert_false(svg.contains("<text"))
 }
+
+///|
+test "metric card renders title value and caption" {
+  let svg = @moonchartkit.render_metric_card(
+    "Tests",
+    "11",
+    caption="all passing",
+  )
+  assert_true(svg.contains("Tests"))
+  assert_true(svg.contains("11"))
+  assert_true(svg.contains("all passing"))
+}
