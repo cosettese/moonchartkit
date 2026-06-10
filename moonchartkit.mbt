@@ -127,6 +127,43 @@ pub fn escape_label(value : String) -> String {
 }
 
 ///|
+pub fn render_bar_chart(
+  points : Array[DataPoint],
+  title? : String = "",
+  size? : ChartSize = ChartSize::new(640, 360, 44),
+  theme? : ChartTheme = ChartTheme::atelier(),
+) -> String {
+  let area = size.plot_area()
+  let max = normalize_positive(max_value(points), 1)
+  let buf = StringBuilder()
+  buf.write_string(svg_header(size, theme))
+  buf.write_string(svg_background(size, theme))
+  buf.write_string(svg_title(title, size, theme))
+  buf.write_string(
+    "<line x1=\"\{area.x}\" y1=\"\{area.y + area.height}\" x2=\"\{area.x + area.width}\" y2=\"\{area.y + area.height}\" stroke=\"\{theme.grid}\"/>",
+  )
+  if points.length() > 0 {
+    let gap = 10
+    let slot = area.width / points.length()
+    let bar_width = normalize_positive(slot - gap, 1)
+    for i = 0; i < points.length(); i = i + 1 {
+      let bar_height = scale_value(points[i].value, max, area.height)
+      let x = area.x + i * slot + gap / 2
+      let y = area.y + area.height - bar_height
+      let fill = if i % 2 == 0 { theme.accent } else { theme.accent_alt }
+      buf.write_string(
+        "<rect x=\"\{x}\" y=\"\{y}\" width=\"\{bar_width}\" height=\"\{bar_height}\" rx=\"\{theme.radius}\" fill=\"\{fill}\"/>",
+      )
+      buf.write_string(
+        "<text x=\"\{x + bar_width / 2}\" y=\"\{area.y + area.height + 18}\" text-anchor=\"middle\" font-size=\"11\" fill=\"\{theme.foreground}\">\{escape_xml(points[i].label)}</text>",
+      )
+    }
+  }
+  buf.write_string("</svg>")
+  buf.to_string()
+}
+
+///|
 fn svg_header(size : ChartSize, theme : ChartTheme) -> String {
   "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"\{size.width}\" height=\"\{size.height}\" viewBox=\"0 0 \{size.width} \{size.height}\" role=\"img\" style=\"font-family:\{escape_xml(theme.font_family)}\">"
 }

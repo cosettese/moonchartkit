@@ -52,3 +52,23 @@ test "dataset helpers compute max and total" {
 test "labels are escaped for svg output" {
   assert_eq(@moonchartkit.escape_label("A&B <Q>"), "A&amp;B &lt;Q&gt;")
 }
+
+///|
+test "bar chart renders svg with bars and title" {
+  let points = [
+    @moonchartkit.DataPoint::new("Core", 30),
+    @moonchartkit.DataPoint::new("Web", 20),
+  ]
+  let svg = @moonchartkit.render_bar_chart(points, title="MoonBit Usage")
+  assert_true(svg.contains("<svg"))
+  assert_true(svg.contains("MoonBit Usage"))
+  assert_true(svg.contains("<rect"))
+  assert_true(svg.contains("Core"))
+}
+
+///|
+test "bar chart escapes labels" {
+  let points = [@moonchartkit.DataPoint::new("A&B", 10)]
+  let svg = @moonchartkit.render_bar_chart(points)
+  assert_true(svg.contains("A&amp;B"))
+}
