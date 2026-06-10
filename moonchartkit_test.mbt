@@ -85,3 +85,11 @@ test "line chart renders path and point markers" {
   assert_true(svg.contains("<circle"))
   assert_true(svg.contains("Trend"))
 }
+
+///|
+test "sparkline renders compact svg path" {
+  let svg = @moonchartkit.render_sparkline([3, 9, 6, 12])
+  assert_true(svg.contains("width=\"180\""))
+  assert_true(svg.contains("<path"))
+  assert_false(svg.contains("<text"))
+}

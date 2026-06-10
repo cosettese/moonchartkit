@@ -209,6 +209,45 @@ pub fn render_line_chart(
 }
 
 ///|
+pub fn render_sparkline(
+  values : Array[Int],
+  size? : ChartSize = ChartSize::new(180, 48, 6),
+  theme? : ChartTheme = ChartTheme::atelier(),
+) -> String {
+  let points : Array[DataPoint] = []
+  for i = 0; i < values.length(); i = i + 1 {
+    points.push(DataPoint::new("", values[i]))
+  }
+  let area = size.plot_area()
+  let max = normalize_positive(max_value(points), 1)
+  let buf = StringBuilder()
+  buf.write_string(svg_header(size, theme))
+  buf.write_string(svg_background(size, theme))
+  if values.length() > 0 {
+    let step = if values.length() == 1 {
+      0
+    } else {
+      area.width / (values.length() - 1)
+    }
+    let path = StringBuilder()
+    for i = 0; i < values.length(); i = i + 1 {
+      let x = area.x + i * step
+      let y = area.y + area.height - scale_value(values[i], max, area.height)
+      if i == 0 {
+        path.write_string("M \{x} \{y}")
+      } else {
+        path.write_string(" L \{x} \{y}")
+      }
+    }
+    buf.write_string(
+      "<path d=\"\{path.to_string()}\" fill=\"none\" stroke=\"\{theme.accent}\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>",
+    )
+  }
+  buf.write_string("</svg>")
+  buf.to_string()
+}
+
+///|
 fn svg_header(size : ChartSize, theme : ChartTheme) -> String {
   "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"\{size.width}\" height=\"\{size.height}\" viewBox=\"0 0 \{size.width} \{size.height}\" role=\"img\" style=\"font-family:\{escape_xml(theme.font_family)}\">"
 }
