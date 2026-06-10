@@ -32,6 +32,8 @@ let points = [
 let svg = @moonchartkit.render_bar_chart(points, title="MoonChartKit Demo")
 ```
 
+更多展示计划见 [examples/gallery.md](examples/gallery.md)。
+
 ## 设计原则
 
 - 后端中立：核心库不依赖浏览器、Canvas、DOM 或文件系统
