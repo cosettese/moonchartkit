@@ -113,6 +113,39 @@ fn scale_value(value : Int, max : Int, height : Int) -> Int {
 }
 
 ///|
+fn escape_xml(value : String) -> String {
+  value
+  .replace(old="&", new="&amp;")
+  .replace(old="<", new="&lt;")
+  .replace(old=">", new="&gt;")
+  .replace(old="\"", new="&quot;")
+}
+
+///|
+pub fn escape_label(value : String) -> String {
+  escape_xml(value)
+}
+
+///|
+fn svg_header(size : ChartSize, theme : ChartTheme) -> String {
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"\{size.width}\" height=\"\{size.height}\" viewBox=\"0 0 \{size.width} \{size.height}\" role=\"img\" style=\"font-family:\{escape_xml(theme.font_family)}\">"
+}
+
+///|
+fn svg_background(size : ChartSize, theme : ChartTheme) -> String {
+  "<rect x=\"0\" y=\"0\" width=\"\{size.width}\" height=\"\{size.height}\" rx=\"\{theme.radius}\" fill=\"\{theme.background}\"/>"
+}
+
+///|
+fn svg_title(title : String, size : ChartSize, theme : ChartTheme) -> String {
+  if title == "" {
+    ""
+  } else {
+    "<text x=\"\{size.width / 2}\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\" fill=\"\{theme.foreground}\">\{escape_xml(title)}</text>"
+  }
+}
+
+///|
 fn normalize_positive(value : Int, fallback : Int) -> Int {
   if value > 0 {
     value

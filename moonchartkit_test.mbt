@@ -47,3 +47,8 @@ test "dataset helpers compute max and total" {
   assert_eq(@moonchartkit.max_value(points), 30)
   assert_eq(@moonchartkit.total_value(points), 60)
 }
+
+///|
+test "labels are escaped for svg output" {
+  assert_eq(@moonchartkit.escape_label("A&B <Q>"), "A&amp;B &lt;Q&gt;")
+}
