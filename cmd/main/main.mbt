@@ -1,7 +1,10 @@
 ///|
-/// Entry point for the CLI or runnable program in this template.
-/// Keep main focused; move logic into the library package.
-/// Run with `moon run cmd/main` from the project root.
 fn main {
-  println("Hello")
+  let points = [
+    @chart.DataPoint::new("Core", 32),
+    @chart.DataPoint::new("Wasm", 48),
+    @chart.DataPoint::new("Tools", 28),
+    @chart.DataPoint::new("Apps", 40),
+  ]
+  println(@chart.render_bar_chart(points, title="MoonChartKit Demo"))
 }

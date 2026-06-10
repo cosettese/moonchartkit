@@ -1,6 +1,6 @@
-// import {
-//   "cosettese/moonchartkit" @chart,
-// }
+import {
+  "cosettese/moonchartkit" @chart,
+}
 
 options(
   "is-main": true,
