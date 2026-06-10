@@ -12,3 +12,18 @@ test "data point stores label and value" {
   assert_eq(point.label, "MoonBit")
   assert_eq(point.value, 42)
 }
+
+///|
+test "atelier theme provides polished defaults" {
+  let theme = @moonchartkit.ChartTheme::atelier()
+  assert_eq(theme.background, "#fbfaf7")
+  assert_eq(theme.accent, "#2f80ed")
+  assert_eq(theme.radius, 6)
+}
+
+///|
+test "midnight theme uses dark background" {
+  let theme = @moonchartkit.ChartTheme::midnight()
+  assert_eq(theme.background, "#111827")
+  assert_eq(theme.foreground, "#f9fafb")
+}
