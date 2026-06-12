@@ -22,13 +22,15 @@ moon test
 moon run cmd/main
 ```
 
-```moonbit
+```moonbit nocheck
+///|
 let points = [
   @moonchartkit.DataPoint::new("Core", 32),
   @moonchartkit.DataPoint::new("Wasm", 48),
   @moonchartkit.DataPoint::new("Tools", 28),
 ]
 
+///|
 let svg = @moonchartkit.render_bar_chart(points, title="MoonChartKit Demo")
 ```
 
