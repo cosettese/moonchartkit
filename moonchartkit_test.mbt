@@ -46,6 +46,11 @@ test "dataset helpers compute max and total" {
   ]
   assert_eq(@moonchartkit.max_value(points), 30)
   assert_eq(@moonchartkit.total_value(points), 60)
+  let summary = @moonchartkit.ChartSummary::from_points(points)
+  assert_eq(summary.count, 3)
+  assert_eq(summary.total, 60)
+  assert_eq(summary.average, 20)
+  assert_true(summary.to_json().contains("\"max\":30"))
 }
 
 ///|
@@ -95,6 +100,15 @@ test "sparkline renders compact svg path" {
 }
 
 ///|
+test "progress bar renders percentage and label" {
+  let svg = @moonchartkit.render_progress_bar("Coverage", 7, 10)
+  assert_true(svg.contains("Coverage"))
+  assert_true(svg.contains("70%"))
+  assert_true(svg.contains("<rect"))
+  assert_eq(@moonchartkit.percent_of(0, 0), 0)
+}
+
+///|
 test "metric card renders title value and caption" {
   let svg = @moonchartkit.render_metric_card(
     "Tests",
@@ -104,4 +118,18 @@ test "metric card renders title value and caption" {
   assert_true(svg.contains("Tests"))
   assert_true(svg.contains("11"))
   assert_true(svg.contains("all passing"))
+}
+
+///|
+test "dashboard combines kpi bars and trend path" {
+  let points = [
+    @moonchartkit.DataPoint::new("Core", 30),
+    @moonchartkit.DataPoint::new("Wasm", 20),
+  ]
+  let svg = @moonchartkit.render_dashboard("Report", points, [3, 5, 4, 8])
+  assert_true(svg.contains("Report"))
+  assert_true(svg.contains("Total"))
+  assert_true(svg.contains("Breakdown"))
+  assert_true(svg.contains("Trend"))
+  assert_true(svg.contains("<path"))
 }

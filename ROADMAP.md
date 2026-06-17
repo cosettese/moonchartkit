@@ -9,20 +9,23 @@
 - [x] 折线图 SVG
 - [x] Sparkline
 - [x] Metric Card
+- [x] Progress Bar
+- [x] ChartSummary 数据摘要
+- [x] Dashboard 报告拼板
 - [x] CLI SVG 演示
 - [x] CI、Issue 模板、PR 模板
 
-## 0.2 图表扩展
+## 0.2 报告组件扩展
 
-- [ ] 饼图与环形图
-- [ ] 面积图
-- [ ] 堆叠柱状图
-- [ ] 坐标轴刻度和网格线
-- [ ] 图例组件
+- [ ] 报告布局模板
+- [ ] SVG 快照测试工具
+- [ ] 主题 token 与紧凑模式
+- [ ] Markdown/HTML 嵌入示例
+- [ ] 数据摘要 schema
 
 ## 0.3 生态集成
 
-- [ ] WebAssembly 示例
-- [ ] Markdown/HTML 嵌入示例
-- [ ] 大数据集性能基准
-- [ ] 图表快照测试工具
+- [ ] CI 报告生成示例
+- [ ] README badge/card 生成示例
+- [ ] 文档站点嵌入示例
+- [ ] 小型 dashboard 模板库

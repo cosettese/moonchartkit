@@ -6,7 +6,7 @@
 moon run cmd/main
 ```
 
-会输出一个带主题、标题、圆角条形、标签和安全 XML 转义能力的 SVG 柱状图。
+会输出一个带 KPI、分类 breakdown、趋势线和安全 XML 转义能力的 SVG dashboard 报告块。
 
 ## 示例数据
 
@@ -25,3 +25,5 @@ let points = [
 - `line-trend.svg`
 - `sparkline-compact.svg`
 - `metric-card.svg`
+- `progress-bar.svg`
+- `dashboard-report.svg`

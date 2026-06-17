@@ -31,6 +31,14 @@ pub(all) struct PlotArea {
 } derive(Eq, Debug)
 
 ///|
+pub(all) struct ChartSummary {
+  count : Int
+  total : Int
+  max : Int
+  average : Int
+} derive(Eq, Debug)
+
+///|
 pub fn ChartSize::new(width : Int, height : Int, padding : Int) -> ChartSize {
   {
     width: normalize_positive(width, 640),
@@ -101,6 +109,36 @@ pub fn total_value(points : Array[DataPoint]) -> Int {
     total = total + points[i].value
   }
   total
+}
+
+///|
+pub fn ChartSummary::from_points(points : Array[DataPoint]) -> ChartSummary {
+  let total = total_value(points)
+  let count = points.length()
+  {
+    count,
+    total,
+    max: max_value(points),
+    average: if count == 0 {
+      0
+    } else {
+      total / count
+    },
+  }
+}
+
+///|
+pub fn ChartSummary::to_json(self : ChartSummary) -> String {
+  "{\"count\":\{self.count},\"total\":\{self.total},\"max\":\{self.max},\"average\":\{self.average}}"
+}
+
+///|
+pub fn percent_of(value : Int, total : Int) -> Int {
+  if value <= 0 || total <= 0 {
+    0
+  } else {
+    value * 100 / total
+  }
 }
 
 ///|
@@ -274,6 +312,171 @@ pub fn render_metric_card(
   }
   buf.write_string("</svg>")
   buf.to_string()
+}
+
+///|
+pub fn render_progress_bar(
+  label : String,
+  value : Int,
+  max : Int,
+  size? : ChartSize = ChartSize::new(420, 110, 24),
+  theme? : ChartTheme = ChartTheme::atelier(),
+) -> String {
+  let area = size.plot_area()
+  let safe_max = normalize_positive(max, 1)
+  let filled = scale_value(value, safe_max, area.width)
+  let pct = percent_of(value, safe_max)
+  let buf = StringBuilder()
+  buf.write_string(svg_header(size, theme))
+  buf.write_string(svg_background(size, theme))
+  buf.write_string(
+    "<text x=\"\{size.padding}\" y=\"34\" font-size=\"13\" font-weight=\"700\" fill=\"\{theme.foreground}\">\{escape_xml(label)}</text>",
+  )
+  buf.write_string(
+    "<rect x=\"\{area.x}\" y=\"54\" width=\"\{area.width}\" height=\"16\" rx=\"8\" fill=\"\{theme.grid}\" opacity=\"0.55\"/>",
+  )
+  buf.write_string(
+    "<rect x=\"\{area.x}\" y=\"54\" width=\"\{filled}\" height=\"16\" rx=\"8\" fill=\"\{theme.accent}\"/>",
+  )
+  buf.write_string(
+    "<text x=\"\{area.x + area.width}\" y=\"34\" text-anchor=\"end\" font-size=\"13\" font-weight=\"700\" fill=\"\{theme.foreground}\">\{pct}%</text>",
+  )
+  buf.write_string("</svg>")
+  buf.to_string()
+}
+
+///|
+pub fn render_dashboard(
+  title : String,
+  points : Array[DataPoint],
+  trend : Array[Int],
+  size? : ChartSize = ChartSize::new(760, 420, 32),
+  theme? : ChartTheme = ChartTheme::atelier(),
+) -> String {
+  let summary = ChartSummary::from_points(points)
+  let area = size.plot_area()
+  let bar_top = area.y + 156
+  let bar_height = area.height - 176
+  let bar_width_area = area.width / 2
+  let trend_left = area.x + bar_width_area + 52
+  let trend_width = area.width - bar_width_area - 52
+  let max = normalize_positive(summary.max, 1)
+  let buf = StringBuilder()
+  buf.write_string(svg_header(size, theme))
+  buf.write_string(svg_background(size, theme))
+  buf.write_string(svg_title(title, size, theme))
+  write_kpi(buf, area.x, area.y + 36, "Total", summary.total.to_string(), theme)
+  write_kpi(
+    buf,
+    area.x + 152,
+    area.y + 36,
+    "Average",
+    summary.average.to_string(),
+    theme,
+  )
+  write_kpi(
+    buf,
+    area.x + 304,
+    area.y + 36,
+    "Max",
+    summary.max.to_string(),
+    theme,
+  )
+  buf.write_string(
+    "<text x=\"\{area.x}\" y=\"\{bar_top - 18}\" font-size=\"12\" font-weight=\"700\" fill=\"\{theme.foreground}\" opacity=\"0.78\">Breakdown</text>",
+  )
+  if points.length() > 0 {
+    let slot = bar_width_area / points.length()
+    for i = 0; i < points.length(); i = i + 1 {
+      let h = scale_value(points[i].value, max, bar_height)
+      let x = area.x + i * slot + 6
+      let y = bar_top + bar_height - h
+      let w = normalize_positive(slot - 12, 1)
+      let fill = if i % 2 == 0 { theme.accent } else { theme.accent_alt }
+      buf.write_string(
+        "<rect x=\"\{x}\" y=\"\{y}\" width=\"\{w}\" height=\"\{h}\" rx=\"\{theme.radius}\" fill=\"\{fill}\"/>",
+      )
+      buf.write_string(
+        "<text x=\"\{x + w / 2}\" y=\"\{bar_top + bar_height + 18}\" text-anchor=\"middle\" font-size=\"10\" fill=\"\{theme.foreground}\">\{escape_xml(points[i].label)}</text>",
+      )
+    }
+  }
+  buf.write_string(
+    "<text x=\"\{trend_left}\" y=\"\{bar_top - 18}\" font-size=\"12\" font-weight=\"700\" fill=\"\{theme.foreground}\" opacity=\"0.78\">Trend</text>",
+  )
+  write_trend_path(
+    buf,
+    trend,
+    { x: trend_left, y: bar_top, width: trend_width, height: bar_height },
+    theme,
+  )
+  buf.write_string("</svg>")
+  buf.to_string()
+}
+
+///|
+fn write_kpi(
+  buf : StringBuilder,
+  x : Int,
+  y : Int,
+  label : String,
+  value : String,
+  theme : ChartTheme,
+) -> Unit {
+  buf.write_string(
+    "<text x=\"\{x}\" y=\"\{y}\" font-size=\"11\" font-weight=\"700\" fill=\"\{theme.foreground}\" opacity=\"0.62\">\{escape_xml(label)}</text>",
+  )
+  buf.write_string(
+    "<text x=\"\{x}\" y=\"\{y + 44}\" font-size=\"32\" font-weight=\"800\" fill=\"\{theme.foreground}\">\{escape_xml(value)}</text>",
+  )
+}
+
+///|
+fn write_trend_path(
+  buf : StringBuilder,
+  values : Array[Int],
+  area : PlotArea,
+  theme : ChartTheme,
+) -> Unit {
+  buf.write_string(
+    "<rect x=\"\{area.x}\" y=\"\{area.y}\" width=\"\{area.width}\" height=\"\{area.height}\" rx=\"\{theme.radius}\" fill=\"none\" stroke=\"\{theme.grid}\"/>",
+  )
+  if values.length() == 0 {
+    return
+  }
+  let max = normalize_positive(max_int(values), 1)
+  let step = if values.length() == 1 {
+    0
+  } else {
+    area.width / (values.length() - 1)
+  }
+  let path = StringBuilder()
+  for i = 0; i < values.length(); i = i + 1 {
+    let x = area.x + i * step
+    let y = area.y + area.height - scale_value(values[i], max, area.height)
+    if i == 0 {
+      path.write_string("M \{x} \{y}")
+    } else {
+      path.write_string(" L \{x} \{y}")
+    }
+  }
+  buf.write_string(
+    "<path d=\"\{path.to_string()}\" fill=\"none\" stroke=\"\{theme.accent}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>",
+  )
+}
+
+///|
+fn max_int(values : Array[Int]) -> Int {
+  if values.length() == 0 {
+    return 0
+  }
+  let mut best = values[0]
+  for i = 1; i < values.length(); i = i + 1 {
+    if values[i] > best {
+      best = values[i]
+    }
+  }
+  best
 }
 
 ///|

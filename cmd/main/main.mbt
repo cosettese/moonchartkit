@@ -6,5 +6,7 @@ fn main {
     @chart.DataPoint::new("Tools", 28),
     @chart.DataPoint::new("Apps", 40),
   ]
-  println(@chart.render_bar_chart(points, title="MoonChartKit Demo"))
+  println(
+    @chart.render_dashboard("MoonChartKit Report", points, [12, 18, 16, 24, 28]),
+  )
 }
