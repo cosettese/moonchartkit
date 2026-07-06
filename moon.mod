@@ -11,7 +11,7 @@
 
 name = "cosettese/moonchartkit"
 
-version = "0.1.0"
+version = "0.2.0"
 
 readme = "README.mbt.md"
 
@@ -19,6 +19,6 @@ repository = "https://github.com/cosettese/moonchartkit"
 
 license = "Apache-2.0"
 
-keywords = [ "chart", "svg", "visualization", "dataviz" ]
+keywords = [ "report", "svg", "accessibility", "markdown", "ci" ]
 
-description = "A lightweight MoonBit chart and SVG visualization toolkit."
+description = "Accessible SVG and Markdown report artifacts for MoonBit."

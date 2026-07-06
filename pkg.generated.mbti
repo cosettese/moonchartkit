@@ -1,0 +1,99 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "cosettese/moonchartkit"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn audit_svg(String) -> SvgAudit
+
+pub fn escape_label(String) -> String
+
+pub fn max_value(Array[DataPoint]) -> Int
+
+pub fn percent_of(Int, Int) -> Int
+
+pub fn render_accessible_report(String, String, Array[DataPoint], Array[Int], size? : ChartSize, theme? : ChartTheme) -> ReportArtifact
+
+pub fn render_bar_chart(Array[DataPoint], title? : String, size? : ChartSize, theme? : ChartTheme) -> String
+
+pub fn render_dashboard(String, Array[DataPoint], Array[Int], size? : ChartSize, theme? : ChartTheme) -> String
+
+pub fn render_line_chart(Array[DataPoint], title? : String, size? : ChartSize, theme? : ChartTheme) -> String
+
+pub fn render_metric_card(String, String, caption? : String, size? : ChartSize, theme? : ChartTheme) -> String
+
+pub fn render_progress_bar(String, Int, Int, size? : ChartSize, theme? : ChartTheme) -> String
+
+pub fn render_sparkline(Array[Int], size? : ChartSize, theme? : ChartTheme) -> String
+
+pub fn total_value(Array[DataPoint]) -> Int
+
+// Errors
+
+// Types and methods
+pub(all) struct ChartSize {
+  width : Int
+  height : Int
+  padding : Int
+} derive(Eq, @debug.Debug)
+pub fn ChartSize::new(Int, Int, Int) -> Self
+pub fn ChartSize::plot_area(Self) -> PlotArea
+
+pub(all) struct ChartSummary {
+  count : Int
+  total : Int
+  max : Int
+  average : Int
+} derive(Eq, @debug.Debug)
+pub fn ChartSummary::from_points(Array[DataPoint]) -> Self
+pub fn ChartSummary::to_json(Self) -> String
+
+pub(all) struct ChartTheme {
+  background : String
+  foreground : String
+  accent : String
+  accent_alt : String
+  grid : String
+  font_family : String
+  radius : Int
+} derive(Eq, @debug.Debug)
+pub fn ChartTheme::atelier() -> Self
+pub fn ChartTheme::midnight() -> Self
+
+pub(all) struct DataPoint {
+  label : String
+  value : Int
+} derive(Eq, @debug.Debug)
+pub fn DataPoint::new(String, Int) -> Self
+
+pub(all) struct PlotArea {
+  x : Int
+  y : Int
+  width : Int
+  height : Int
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ReportArtifact {
+  svg : String
+  markdown : String
+  alt_text : String
+  summary : ChartSummary
+  audit : SvgAudit
+} derive(Eq, @debug.Debug)
+
+pub(all) struct SvgAudit {
+  has_title : Bool
+  has_description : Bool
+  has_aria_labelledby : Bool
+  has_role_img : Bool
+  has_unsafe_script : Bool
+  issue_count : Int
+} derive(Eq, @debug.Debug)
+pub fn SvgAudit::passed(Self) -> Bool
+
+// Type aliases
+
+// Traits
+

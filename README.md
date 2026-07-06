@@ -1,5 +1,5 @@
 # MoonChartKit
 
-MoonChartKit 是一个面向 MoonBit 的轻量图表与 SVG 可视化基础库。
+MoonBit 无障碍 SVG 报告工件与文档可视化基础库。
 
-完整说明见 [README.mbt.md](README.mbt.md)。
+完整文档见 [README.mbt.md](README.mbt.md)。

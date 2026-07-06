@@ -1,29 +1,30 @@
 # MoonChartKit Gallery
 
-本目录用于收集可复制的 SVG 图表示例。当前 CLI 示例：
+运行基础 Dashboard：
 
 ```bash
 moon run cmd/main
 ```
 
-会输出一个带 KPI、分类 breakdown、趋势线和安全 XML 转义能力的 SVG dashboard 报告块。
-
-## 示例数据
+生成具备 SVG、Markdown 和替代文本的报告工件：
 
 ```moonbit
 let points = [
-  @chart.DataPoint::new("Core", 32),
-  @chart.DataPoint::new("Wasm", 48),
-  @chart.DataPoint::new("Tools", 28),
-  @chart.DataPoint::new("Apps", 40),
+  DataPoint::new("Core", 32),
+  DataPoint::new("Wasm", 48),
+  DataPoint::new("Tools", 28),
+  DataPoint::new("Apps", 40),
 ]
+
+let artifact = render_accessible_report(
+  "MoonChartKit Report",
+  "Package activity by area",
+  points,
+  [12, 18, 16, 24, 28],
+)
+
+assert_true(artifact.audit.passed())
 ```
 
-## 后续画廊计划
-
-- `bar-basic.svg`
-- `line-trend.svg`
-- `sparkline-compact.svg`
-- `metric-card.svg`
-- `progress-bar.svg`
-- `dashboard-report.svg`
+建议将 `artifact.svg` 嵌入网页或文档，并在不支持 SVG 的环境中使用
+`artifact.markdown` 或 `artifact.alt_text`。
