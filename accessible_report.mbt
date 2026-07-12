@@ -70,13 +70,7 @@ pub fn render_accessible_report(
 ) -> ReportArtifact {
   let summary = ChartSummary::from_points(points)
   let svg = render_accessible_svg(
-    title,
-    description,
-    points,
-    trend,
-    summary,
-    size,
-    theme,
+    title, description, points, trend, summary, size, theme,
   )
   let markdown = render_markdown_report(title, description, points, summary)
   let alt_text = "\{title}. \{description}. \{summary.count} categories, total \{summary.total}, average \{summary.average}, maximum \{summary.max}."
@@ -148,12 +142,7 @@ fn render_accessible_svg(
   write_trend_path(
     buf,
     trend,
-    {
-      x: trend_left,
-      y: chart_top,
-      width: trend_width,
-      height: chart_height,
-    },
+    { x: trend_left, y: chart_top, width: trend_width, height: chart_height },
     theme,
   )
   buf.write_string("</svg>")

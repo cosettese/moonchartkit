@@ -8,12 +8,7 @@ fn main {
     let points : Array[@chart.DataPoint] = []
     let trend : Array[Int] = []
     for i = 0; i < 20; i = i + 1 {
-      points.push(
-        @chart.DataPoint::new(
-          "T\{i}",
-          (report * 13 + i * 17) % 101,
-        ),
-      )
+      points.push(@chart.DataPoint::new("T\{i}", (report * 13 + i * 17) % 101))
       trend.push((report * 7 + i * 11) % 101)
     }
     let artifact = @chart.render_accessible_report(
