@@ -24,6 +24,12 @@ jobs:
       - name: Check
         run: moon check --target ${{ matrix.target }}
 
+      # `moon fmt` and `moon info` in the current supported Moon CLI do not
+      # accept `--deny-warn`. `--check` is the non-mutating formatter gate;
+      # `moon info` plus a clean interface diff is the API metadata gate.
+      - name: Format
+        run: moon fmt --check
+
       - name: Run tests
         run: moon test --target ${{ matrix.target }}
 

@@ -18,6 +18,8 @@ pub fn render_accessible_report(String, String, Array[DataPoint], Array[Int], si
 
 pub fn render_bar_chart(Array[DataPoint], title? : String, size? : ChartSize, theme? : ChartTheme) -> String
 
+pub fn render_chart(ChartSpec) -> ChartArtifact
+
 pub fn render_dashboard(String, Array[DataPoint], Array[Int], size? : ChartSize, theme? : ChartTheme) -> String
 
 pub fn render_line_chart(Array[DataPoint], title? : String, size? : ChartSize, theme? : ChartTheme) -> String
@@ -30,9 +32,64 @@ pub fn render_sparkline(Array[Int], size? : ChartSize, theme? : ChartTheme) -> S
 
 pub fn total_value(Array[DataPoint]) -> Int
 
+pub fn truncate_label(String, Int) -> String
+
 // Errors
 
 // Types and methods
+pub(all) struct BandScale {
+  start : Int
+  end : Int
+  count : Int
+  inner_padding : Int
+} derive(Eq, @debug.Debug)
+pub fn BandScale::band_width(Self) -> Int
+pub fn BandScale::center_for(Self, Int) -> Int
+pub fn BandScale::new(Int, Int, Int, inner_padding? : Int) -> Self
+pub fn BandScale::slot_width(Self) -> Int
+pub fn BandScale::x_for(Self, Int) -> Int
+
+pub(all) struct ChartArtifact {
+  svg : String
+  markdown : String
+  alt_text : String
+  audit : SvgAudit
+} derive(Eq, @debug.Debug)
+
+pub(all) enum ChartKind {
+  Bar
+  Line
+  Area
+  Scatter
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ChartMargins {
+  top : Int
+  right : Int
+  bottom : Int
+  left : Int
+} derive(Eq, @debug.Debug)
+pub fn ChartMargins::new(Int, Int, Int, Int) -> Self
+pub fn ChartMargins::standard() -> Self
+
+pub(all) struct ChartRect {
+  x : Int
+  y : Int
+  width : Int
+  height : Int
+} derive(Eq, @debug.Debug)
+pub fn ChartRect::bottom(Self) -> Int
+pub fn ChartRect::inset(Self, ChartMargins) -> Self
+pub fn ChartRect::new(Int, Int, Int, Int) -> Self
+pub fn ChartRect::right(Self) -> Int
+
+pub(all) struct ChartSeries {
+  name : String
+  points : Array[DataPoint]
+  color : String
+} derive(Eq, @debug.Debug)
+pub fn ChartSeries::new(String, Array[DataPoint], color? : String) -> Self
+
 pub(all) struct ChartSize {
   width : Int
   height : Int
@@ -40,6 +97,23 @@ pub(all) struct ChartSize {
 } derive(Eq, @debug.Debug)
 pub fn ChartSize::new(Int, Int, Int) -> Self
 pub fn ChartSize::plot_area(Self) -> PlotArea
+
+pub(all) struct ChartSpec {
+  title : String
+  description : String
+  kind : ChartKind
+  series : Array[ChartSeries]
+  size : ChartSize
+  margins : ChartMargins
+  theme : ChartTheme
+  show_legend : Bool
+  show_grid : Bool
+} derive(Eq, @debug.Debug)
+pub fn ChartSpec::all_points(Self) -> Array[DataPoint]
+pub fn ChartSpec::category_count(Self) -> Int
+pub fn ChartSpec::new(String, String, ChartKind, Array[ChartSeries], size? : ChartSize, margins? : ChartMargins, theme? : ChartTheme) -> Self
+pub fn ChartSpec::with_grid(Self, Bool) -> Self
+pub fn ChartSpec::with_legend(Self, Bool) -> Self
 
 pub(all) struct ChartSummary {
   count : Int
@@ -68,6 +142,40 @@ pub(all) struct DataPoint {
 } derive(Eq, @debug.Debug)
 pub fn DataPoint::new(String, Int) -> Self
 
+pub(all) struct GridLayout {
+  columns : Int
+  gap : Int
+  margins : ChartMargins
+} derive(Eq, @debug.Debug)
+pub fn GridLayout::cell_rect(Self, ChartSize, GridPlacement, Int) -> ChartRect
+pub fn GridLayout::new(Int, gap? : Int, margins? : ChartMargins) -> Self
+
+pub(all) struct GridPlacement {
+  column : Int
+  row : Int
+  column_span : Int
+  row_span : Int
+} derive(Eq, @debug.Debug)
+pub fn GridPlacement::new(Int, Int, column_span? : Int, row_span? : Int) -> Self
+
+pub(all) struct LinearScale {
+  domain : NumericDomain
+  range_start : Int
+  range_end : Int
+} derive(Eq, @debug.Debug)
+pub fn LinearScale::map(Self, Int) -> Int
+pub fn LinearScale::new(NumericDomain, Int, Int) -> Self
+pub fn LinearScale::ticks(Self, Int) -> TickSet
+
+pub(all) struct NumericDomain {
+  min : Int
+  max : Int
+} derive(Eq, @debug.Debug)
+pub fn NumericDomain::from_points(Array[DataPoint]) -> Self
+pub fn NumericDomain::include_zero(Self) -> Self
+pub fn NumericDomain::new(Int, Int) -> Self
+pub fn NumericDomain::span(Self) -> Int
+
 pub(all) struct PlotArea {
   x : Int
   y : Int
@@ -92,6 +200,11 @@ pub(all) struct SvgAudit {
   issue_count : Int
 } derive(Eq, @debug.Debug)
 pub fn SvgAudit::passed(Self) -> Bool
+
+pub(all) struct TickSet {
+  values : Array[Int]
+  step : Int
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 

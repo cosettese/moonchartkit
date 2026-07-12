@@ -1,5 +1,21 @@
 # 验收证据
 
+## 工具链与 CI
+
+CI 在 Native、JavaScript、Wasm 与 Wasm-GC 四个目标上分别执行：
+
+```bash
+moon check --target <target>
+moon fmt --check
+moon test --target <target>
+moon info
+git diff --exit-code -- '*.mbti'
+```
+
+当前支持的 Moon CLI 不接受 `moon fmt --deny-warn` 或
+`moon info --deny-warn`；这两个参数会在验证前直接报错。项目因此使用 CLI
+支持的、无副作用的等价门禁，并在工作流中明确固定，避免验收脚本与工具链版本脱节。
+
 ## 正确性与安全
 
 - SVG 包含 `<title>`、`<desc>`、`role="img"` 和 `aria-labelledby`。
