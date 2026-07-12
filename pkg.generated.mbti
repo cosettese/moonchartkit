@@ -8,11 +8,21 @@ import {
 // Values
 pub fn audit_svg(String) -> SvgAudit
 
+pub fn clamp_series(Array[DataPoint], NumericDomain) -> Array[DataPoint]
+
+pub fn cumulative_series(Array[DataPoint]) -> Array[DataPoint]
+
+pub fn delta_series(Array[DataPoint]) -> Array[DataPoint]
+
 pub fn escape_label(String) -> String
 
 pub fn max_value(Array[DataPoint]) -> Int
 
+pub fn moving_average_series(Array[DataPoint], Int) -> Array[DataPoint]
+
 pub fn percent_of(Int, Int) -> Int
+
+pub fn percent_series(Array[DataPoint]) -> Array[DataPoint]
 
 pub fn render_accessible_report(String, String, Array[DataPoint], Array[Int], size? : ChartSize, theme? : ChartTheme) -> ReportArtifact
 
@@ -29,6 +39,8 @@ pub fn render_metric_card(String, String, caption? : String, size? : ChartSize, 
 pub fn render_progress_bar(String, Int, Int, size? : ChartSize, theme? : ChartTheme) -> String
 
 pub fn render_sparkline(Array[Int], size? : ChartSize, theme? : ChartTheme) -> String
+
+pub fn series_statistics(Array[DataPoint]) -> SeriesStatistics
 
 pub fn total_value(Array[DataPoint]) -> Int
 
@@ -189,6 +201,14 @@ pub(all) struct ReportArtifact {
   alt_text : String
   summary : ChartSummary
   audit : SvgAudit
+} derive(Eq, @debug.Debug)
+
+pub(all) struct SeriesStatistics {
+  count : Int
+  min : Int
+  max : Int
+  total : Int
+  average : Int
 } derive(Eq, @debug.Debug)
 
 pub(all) struct SvgAudit {
